@@ -7,18 +7,26 @@ namespace AdventOfCode._2023.Day07;
 [ProblemName("Camel Cards")]
 public class Solution : ISolver
 {
-    private static readonly ImmutableList<char> CardsLookup = ImmutableList.Create('2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A');
+    private static bool _useJokers = false;
+    private static ImmutableList<char> _cardsLookup = ImmutableList<char>.Empty;
     
     public string PartOne(string input)
     {
+        _cardsLookup = ImmutableList.Create('2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A');
+        
         var hands = input.GetLines().Select(ParseHand).ToList();
-        var rankedHands = RankHands(hands);
-        return rankedHands.Select((hand, index) => hand.Bid * (index + 1)).Sum().ToString();
+        hands.Sort();
+        return hands.Select((hand, index) => hand.Bid * (index + 1)).Sum().ToString();
     }
 
     public string PartTwo(string input)
     {
-        throw new NotImplementedException();
+        _cardsLookup = ImmutableList.Create('J', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A');
+        _useJokers = true;
+        
+        var hands = input.GetLines().Select(ParseHand).ToList();
+        hands.Sort();
+        return hands.Select((hand, index) => hand.Bid * (index + 1)).Sum().ToString();
     }
 
     private Hand ParseHand(string line)
@@ -27,87 +35,29 @@ public class Solution : ISolver
         return new Hand(parts[0].ToList(), int.Parse(parts[1]));
     }
 
-    private List<Hand> RankHands(List<Hand> hands)
-    {
-        List<Hand> fiveOfAKind = new();
-        List<Hand> fourOfAKind = new();
-        List<Hand> fullHouse = new();
-        List<Hand> threeOfAKind = new();
-        List<Hand> twoPair = new();
-        List<Hand> onePair = new();
-        List<Hand> highCard = new();
-
-        foreach (var hand in hands)
-        {
-            var groupedHand = hand.Cards.GroupBy(c => c).ToList();
-            if (groupedHand.Count == 1)
-            {
-                fiveOfAKind.Add(hand);
-            }
-            else if (groupedHand.Any(x => x.Count() == 4))
-            {
-                fourOfAKind.Add(hand);
-            }
-            else if (groupedHand.Any(x => x.Count() == 3) && groupedHand.Any(x => x.Count() == 2))
-            {
-                fullHouse.Add(hand);
-            }
-            else if (groupedHand.Any(x => x.Count() == 3))
-            {
-                threeOfAKind.Add(hand);
-            }
-            else if (groupedHand.Count(x => x.Count() == 2) == 2)
-            {
-                twoPair.Add(hand);
-            }
-            else if (groupedHand.Any(x => x.Count() == 2))
-            {
-                onePair.Add(hand);
-            }
-            else
-            {
-                highCard.Add(hand);
-            }
-        }
-
-        fiveOfAKind.Sort();
-        fourOfAKind.Sort();
-        fullHouse.Sort();
-        threeOfAKind.Sort();
-        twoPair.Sort();
-        onePair.Sort();
-        highCard.Sort();
-
-        return highCard.Concat(onePair).Concat(twoPair).Concat(threeOfAKind).Concat(fullHouse).Concat(fourOfAKind).Concat(fiveOfAKind).ToList();
-    }
-
     private record Hand(List<char> Cards, int Bid) : IComparable<Hand>
     {
-        public int GetCardValue => Cards.Sum(c => CardsLookup.IndexOf(c));
+        private int GetValue()
+        {
+            return !_useJokers ? GetCardsValue(Cards) : Cards.Select(card => GetCardsValue(Cards.Select(x => x == 'J' ? card : x).ToList())).Max();
+        }
+
+        private static int GetCardsValue(List<char> cards) => cards.Select(currentCard => cards.Count(card => currentCard == card)).Sum();
 
         public int CompareTo(Hand? other)
         {
             if (other == null) return -1;
+
+            if (GetValue() < other.GetValue()) return -1;
+            if (GetValue() > other.GetValue()) return 1;
             
             for (int i = 0; i < 5; i++)
             {
-                
-                var currentCard = Cards[i];
-                var currentOtherCard = other.Cards[i];
-
-                if (CardsLookup.IndexOf(currentCard) < CardsLookup.IndexOf(currentOtherCard))
-                {
-                    return -1;
-                }
-
-                if (CardsLookup.IndexOf(currentCard) > CardsLookup.IndexOf(currentOtherCard))
-                {
-                    return 1;
-                }
+                if (_cardsLookup.IndexOf(Cards[i]) < _cardsLookup.IndexOf(other.Cards[i])) return -1;
+                if (_cardsLookup.IndexOf(Cards[i]) > _cardsLookup.IndexOf(other.Cards[i])) return 1;
             }
 
             return 0;
         }
     }
 }
-

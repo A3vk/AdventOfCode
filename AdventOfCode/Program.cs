@@ -27,7 +27,7 @@ else if (args.Length >= 1 && Regex.Match(args[0], @"^([0-9]+)/([0-9]+)$").Succes
 }
 else
 {
-    results.Add(runner.Run(2023, 7, true));
+    results.Add(runner.Run(2023, 7, false));
 }
 
 // DateTime today = DateTime.Now;

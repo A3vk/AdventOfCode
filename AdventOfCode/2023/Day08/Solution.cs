@@ -27,7 +27,7 @@ public class Solution : ISolver
         return map.Keys
             .Where(key => key.EndsWith('A'))
             .Select(key => NumberOfStepsToEnd(key, "Z", directions, map))
-            .Aggregate(1L, CustomMath.LeastCommonMultiple).ToString();
+            .Aggregate(1L, MathExtensions.LeastCommonMultiple).ToString();
     }
     
     

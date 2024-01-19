@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Core.Utils;
 
-public static class CustomMath
+public static class Calculations
 {
     public static long LeastCommonMultiple(long a, long b)
     {

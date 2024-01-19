@@ -2,6 +2,7 @@
 
 namespace AdventOfCode.EmptyDay;
 
+// Problem name
 public class Solution : ISolver
 {
     public string PartOne(string input)

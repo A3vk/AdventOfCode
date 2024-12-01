@@ -35,12 +35,10 @@ public class DownloadCommand : Command
             return;
         }
         
-        Console.WriteLine($"Running solution for {year}-{day}");
+        Console.WriteLine($"Downloading files for {year}-{day}");
         
         HttpClient httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Add("Cookie", $"session={sessionCookie}");
-        // httpClient.DefaultRequestHeaders.Add("session", sessionCookie);
-        // httpClient.DefaultRequestHeaders.Add("User-Agent", "github.com/A3vk/AdventOfCode");
 
         var descriptionResponse = await httpClient.GetAsync($"https://adventofcode.com/{year}/day/{day}");
         if (!descriptionResponse.IsSuccessStatusCode)
@@ -71,8 +69,6 @@ public class DownloadCommand : Command
         string inputContent = await inputResponse.Content.ReadAsStringAsync();
         
         CreateDay(output, year, day, title, description, inputContent);
-        
-        
     }
 
     private void LogError(string message)
@@ -124,16 +120,31 @@ public class DownloadCommand : Command
         DirectoryInfo emptyDayDirectory = new DirectoryInfo(Path.Combine(assemblyDir, "EmptyDay"));
         foreach (var file in emptyDayDirectory.GetFiles())
         {
-            file.CopyTo(Path.Combine(dayPath, file.Name), false);
+            try
+            {
+                file.CopyTo(Path.Combine(dayPath, file.Name), file.Name == "README.md");
+            }
+            catch
+            {
+                continue;
+            }
+
+            if (file.Name == "Solution.cs")
+            {
+                string solutionContent = File.ReadAllText(Path.Combine(dayPath, "Solution.cs"));
+                solutionContent = solutionContent.Replace("<YEAR>", year.ToString());
+                solutionContent = solutionContent.Replace("<DAY>", day.ToString("D2"));
+                solutionContent = solutionContent.Replace("<PROBLEM_NAME>", title);
+                File.WriteAllText(Path.Combine(dayPath, "Solution.cs"), solutionContent);
+            }
+            else if (file.Name == "README.md")
+            {
+                File.WriteAllText(Path.Combine(dayPath, "README.md"), readme);
+            }
+            else if (file.Name == "input.txt")
+            {
+                File.WriteAllText(Path.Combine(dayPath, "input.txt"), input);
+            }
         }
-        
-        string solutionContent = File.ReadAllText(Path.Combine(dayPath, "Solution.cs"));
-        solutionContent = solutionContent.Replace("<YEAR>", year.ToString());
-        solutionContent = solutionContent.Replace("<DAY>", day.ToString("D2"));
-        solutionContent = solutionContent.Replace("<PROBLEM_NAME>", title);
-        File.WriteAllText(Path.Combine(dayPath, "Solution.cs"), solutionContent);
-        
-        File.WriteAllText(Path.Combine(dayPath, "README.md"), readme);
-        File.WriteAllText(Path.Combine(dayPath, "input.txt"), input);
     }
 }

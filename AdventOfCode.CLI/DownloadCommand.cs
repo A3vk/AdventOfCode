@@ -143,7 +143,7 @@ public class DownloadCommand : Command
             }
             else if (file.Name == "input.txt")
             {
-                File.WriteAllText(Path.Combine(dayPath, "input.txt"), input);
+                File.WriteAllText(Path.Combine(dayPath, "input.txt"), input.Trim());
             }
         }
     }

@@ -62,7 +62,9 @@ namespace AdventOfCode.Core
 
         public static string WorkingDir(this ISolver solver)
         {
-            return WorkingDir(solver.Year(), solver.Day());
+            var solverAssembly = Assembly.GetAssembly(solver.GetType()) ?? throw new InvalidOperationException("Assembly cannot be loaded");
+            var assemblyDir = Path.GetDirectoryName(solverAssembly.Location) ?? throw new InvalidOperationException("Assembly location not found");
+            return Path.Combine(assemblyDir, WorkingDir(solver.Year(), solver.Day()));
         }
 
         public static ISolver Activate(this Type solverType)

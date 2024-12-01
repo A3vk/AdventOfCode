@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Core.Utils;
+﻿namespace AdventOfCode.Core.Extensions;
 
 public static class MathExtensions
 {

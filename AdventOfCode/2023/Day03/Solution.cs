@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using AdventOfCode.Core;
-using AdventOfCode.Core.Utils;
+using AdventOfCode.Core.Extensions;
 
 namespace AdventOfCode._2023.Day03
 {

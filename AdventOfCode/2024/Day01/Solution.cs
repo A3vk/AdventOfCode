@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using AdventOfCode.Core;
 using AdventOfCode.Core.Extensions;
 
@@ -13,12 +12,7 @@ public class Solution : ISolver
         leftLocationIds = leftLocationIds.Order().ToList();
         rightLocationIds = rightLocationIds.Order().ToList();
 
-        int totalDistance = 0;
-        for (int i = 0; i < leftLocationIds.Count; i++)
-        {
-            int distance = Math.Abs(leftLocationIds[i] - rightLocationIds[i]);
-            totalDistance += distance;
-        }
+        int totalDistance = leftLocationIds.Select((locationId, index) => Math.Abs(locationId - rightLocationIds[index])).Sum();
 
         return totalDistance.ToString();
     }
@@ -44,9 +38,8 @@ public class Solution : ISolver
 
         List<int> left = [];
         List<int> right = [];
-        foreach (var line in lines)
+        foreach (var locationIds in lines.Select(line => line.Split("   ").Select(int.Parse).ToArray()))
         {
-            var locationIds = line.Split("   ").Select(int.Parse).ToList();
             left.Add(locationIds[0]);
             right.Add(locationIds[1]);
         }

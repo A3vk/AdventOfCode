@@ -22,11 +22,10 @@ public class RunCommand : Command
 
     private void ExecuteCommand(int year, int day, bool useSample)
     {
-        Console.WriteLine($"Running solution for {year}-{day}. Use sample {useSample}");
         var result = _runner.RunDay(year, day, useSample);
         
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine($"---    Year {result.SolverType.Year()} Day {result.SolverType.Day()}: {result.SolverType.GetName()}    ---");
+        Console.WriteLine($"---    Year {result.SolverType.Year()} Day {result.SolverType.Day()}: {result.SolverType.GetName()} {(useSample ? "[SAMPLE]" : "")}    ---");
 
         Console.ForegroundColor = ConsoleColor.Gray;
         foreach (var answer in result.Answers)

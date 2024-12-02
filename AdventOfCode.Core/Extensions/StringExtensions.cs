@@ -8,4 +8,9 @@ public static class StringExtensions
     }
 
     public static string NormalizeBreaks(this string value) => value.Replace("\r", "");
+
+    public static List<int> ToIntList(this string value, string separator = ",")
+    {
+        return value.Split(separator).Select(int.Parse).ToList();
+    }
 }

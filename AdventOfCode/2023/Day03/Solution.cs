@@ -20,7 +20,7 @@ namespace AdventOfCode._2023.Day03
 
         public string PartTwo(string input)
         {
-            var rows = input.GetLines();
+            var rows = input.GetLines().ToList();
             var parts = ParseComponents(rows, @"\d+");
             var gears = ParseComponents(rows, @"\*");
             

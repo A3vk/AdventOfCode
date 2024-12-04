@@ -1,4 +1,3 @@
-using System.Numerics;
 using AdventOfCode.Core;
 using AdventOfCode.Core.Extensions;
 using AdventOfCode.Core.Math;
@@ -16,7 +15,24 @@ public class Solution : ISolver
 
     public string PartTwo(string input)
     {
-        throw new NotImplementedException();
+        int count = 0;
+        
+        var wordGrid = new WordGrid(input);
+        var possibleCenterPositions = wordGrid.GetPositionsOfLetter('A');
+        foreach (var position in possibleCenterPositions)
+        {
+            var topLeftPosition = position - Vector2Int.One;
+            var subWordGrid = wordGrid.CreateSubWordGrid(topLeftPosition, new Vector2Int(3, 3));
+            if (subWordGrid is null) 
+                continue;
+            
+            if (subWordGrid.CountOccurrencesInGrid("MAS", true) >= 2)
+            {
+                count++;
+            }
+        }
+        
+        return count.ToString();
     }
 
     private class WordGrid
@@ -41,7 +57,9 @@ public class Solution : ISolver
             _grid = lines.Select(x => x.ToCharArray()).ToArray();
         }
 
-        public int CountOccurrencesInGrid(string word)
+        private WordGrid(char[][] grid) => _grid = grid;
+
+        public int CountOccurrencesInGrid(string word, bool useOnlyDiagonals = false)
         {
             int result = 0;
 
@@ -56,13 +74,50 @@ public class Solution : ISolver
 
                     foreach (var direction in Enum.GetValues<Direction>())
                     {
+                        if (useOnlyDiagonals && (_directions[direction].X == 0 || _directions[direction].Y == 0)) continue;
                         var remainder = GetLettersInDirection(direction, new Vector2Int(x, y), neededRemainingWord.Length);
-                        if (remainder == neededRemainingWord) { result += 1; }
+                        if (remainder == neededRemainingWord) { result++; }
                     }
                 }
             }
 
             return result;
+        }
+
+        public List<Vector2Int> GetPositionsOfLetter(char letter)
+        {
+            List<Vector2Int> positions = [];
+            for (int y = 0; y < _grid.Length; y++)
+            {
+                for (int x = 0; x < _grid[y].Length; x++)
+                {
+                    if (_grid[y][x] != letter) continue;
+                    
+                    positions.Add(new Vector2Int(x, y));
+                }
+            }
+            
+            return positions;
+        }
+
+        public WordGrid? CreateSubWordGrid(Vector2Int topLeftPosition, Vector2Int size)
+        {
+            if (topLeftPosition.Y < 0 || topLeftPosition.Y + size.Y > _grid.Length || topLeftPosition.X < 0 || topLeftPosition.X + size.X > _grid[topLeftPosition.Y].Length) 
+                return null;
+
+            char[][] subGrid = new char[size.Y][];
+            
+            for (int y = 0; y < size.Y; y++)
+            {
+                subGrid[y] = new char[size.X];
+                
+                for (int x = 0; x < size.X; x++)
+                {
+                    subGrid[y][x] = _grid[topLeftPosition.Y + y][topLeftPosition.X + x];
+                }
+            }
+            
+            return new WordGrid(subGrid);
         }
 
         private string GetLettersInDirection(Direction direction, Vector2Int position, int length)
@@ -92,6 +147,6 @@ public class Solution : ISolver
         Down, 
         DownLeft,
         Left, 
-        UpLeft,
+        UpLeft
     }
 }

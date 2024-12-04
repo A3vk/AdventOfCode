@@ -8,7 +8,7 @@ public struct Vector2Int : IEquatable<Vector2Int>
     public static Vector2Int Up = new(0, 1);
     
     public static Vector2Int Zero = new(0, 0);
-    public static Vector2Int One = new(0, 0);
+    public static Vector2Int One = new(1, 1);
     
     public Vector2Int(int x, int y)
     {
@@ -19,8 +19,13 @@ public struct Vector2Int : IEquatable<Vector2Int>
     public int X { get; }
     public int Y { get; }
         
+    public static Vector2Int operator -(Vector2Int value) => new(-value.X, -value.Y);
     public static Vector2Int operator -(Vector2Int a, Vector2Int b) => new(a.X - b.X, a.Y - b.Y);
     public static Vector2Int operator +(Vector2Int a, Vector2Int b) => new(a.X + b.X, a.Y + b.Y);
+    public static Vector2Int operator *(Vector2Int value, int multiplier) => new(value.X * multiplier, value.Y * multiplier);
+    public static Vector2Int operator * (Vector2Int a, Vector2Int b) => new(a.X * b.X, a.Y * b.Y);
+    public static Vector2Int operator /(Vector2Int value, int divider) => new(value.X / divider, value.Y / divider);
+    public static Vector2Int operator /(Vector2Int a, Vector2Int b) => new(a.X / b.X, a.Y / b.Y);
 
     public bool Equals(Vector2Int other)
     {

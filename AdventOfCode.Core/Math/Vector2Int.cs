@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Core.Math;
 
-public struct Vector2Int : IEquatable<Vector2Int>
+public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
 {
     public static Vector2Int Down = new(0, -1);
     public static Vector2Int Left = new(-1, 0);
@@ -40,5 +40,16 @@ public struct Vector2Int : IEquatable<Vector2Int>
     public override int GetHashCode()
     {
         return HashCode.Combine(X, Y);
+    }
+
+    public string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        FormattableString formattable = $"<{X},{Y}>";
+        return formattable.ToString(formatProvider);
+    }
+
+    public override string ToString()
+    {
+        return $"<{X},{Y}>";
     }
 }

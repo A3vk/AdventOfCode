@@ -7,6 +7,11 @@ public static class StringExtensions
         return value.NormalizeBreaks().Split('\n').ToList();
     }
 
+    public static List<string> SplitOnBlankLines(this string value)
+    {
+        return value.NormalizeBreaks().Split("\n\n").ToList();
+    }
+
     public static string NormalizeBreaks(this string value) => value.Replace("\r", "");
 
     public static List<int> ToIntList(this string value, string separator = ",")

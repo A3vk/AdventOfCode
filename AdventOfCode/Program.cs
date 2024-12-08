@@ -2,4 +2,6 @@
 using AdventOfCode;
 
 var runner = new SolutionRunner();
-runner.RunDay(DateTime.Now.Year, DateTime.Now.Day, true);
+var day = DateTime.Now.Day;
+day = 4;
+runner.RunDay(DateTime.Now.Year, day, true);

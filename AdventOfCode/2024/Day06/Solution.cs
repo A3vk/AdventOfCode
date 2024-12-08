@@ -1,8 +1,5 @@
-using System.Numerics;
 using AdventOfCode.Core;
 using AdventOfCode.Core.Common;
-using AdventOfCode.Core.Enums;
-using AdventOfCode.Core.Extensions;
 using AdventOfCode.Core.Math;
 
 namespace AdventOfCode._2024.Day06;
@@ -12,63 +9,60 @@ public class Solution : ISolver
 {
     public string PartOne(string input)
     {
-        var map = Grid<char>.CreateCharGrid(input);
-        var guardPosition = map.GetPosition('^');
+        var (map, guardPosition) = Parse(input);
         
-        ArgumentNullException.ThrowIfNull(guardPosition);
-        
-        return CountVisitedGuardPositions(map, guardPosition.Value).ToString();
+        return Walk(map, guardPosition).positions.Count().ToString();
     }
 
     public string PartTwo(string input)
     {
-        throw new NotImplementedException();
+        var (map, guardPosition) = Parse(input);
+        
+        var positions = Walk(map, guardPosition).positions;
+        int numberOfLoops = 0;
+        foreach (var position in positions)
+        {
+            map.SetValue(position, '#');
+            if (Walk(map, guardPosition).isLoop)
+            {
+                numberOfLoops++;
+            }
+            map.SetValue(position, '.');
+        }
+
+        return numberOfLoops.ToString();
     }
 
-    private int CountVisitedGuardPositions(Grid<char> map, Vector2Int guardPosition)
+    private (IEnumerable<Vector2Int> positions, bool isLoop) Walk(Grid<char> map, Vector2Int guardPosition)
     {
-        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+        HashSet<(Vector2Int position, Vector2Int direction)> visited = [];
         
-        Direction direction = Direction.Up;
-        while (true)
+        var direction = Vector2Int.Up;
+        while (!map.IsOutOfBounds(guardPosition) && !visited.Contains((guardPosition, direction)))
         {
-            map[guardPosition.Y][guardPosition.X] = 'X';
-            visited.Add(guardPosition);
-            
-            var nextPosition = guardPosition + direction.ToVector2Int();
-            if (map.IsOutOfBounds(nextPosition))
+            visited.Add((guardPosition, direction));
+            if (map.GetValueOrDefault(guardPosition + direction) == '#')
             {
-                break;
+                direction.Rotate90Degrees();
             }
-
-            // If there is something directly in front of you, turn right 90 degrees.
-            if (map[nextPosition.Y][nextPosition.X] == '#')
+            else
             {
-                direction = direction.Turn90Degrees();
-                nextPosition = guardPosition + direction.ToVector2Int();
+                guardPosition += direction;
             }
-            
-            // Otherwise, take a step forward.
-            guardPosition = nextPosition;
-            map[guardPosition.Y][guardPosition.X] = GetGuardCharacter(direction);
         }
         
-        return visited.Count;
+        return (
+            positions: visited.Select(x => x.position).Distinct(), 
+            isLoop: visited.Contains((guardPosition, direction))
+        );
     }
 
-    private char GetGuardCharacter(Direction guardDirection)
+    private (Grid<char> map, Vector2Int guardPosition) Parse(string input)
     {
-        return guardDirection switch
-        {
-            Direction.Up => '\u2191',
-            Direction.UpRight => '\u2197',
-            Direction.Right => '\u2192',
-            Direction.DownRight => '\u2198',
-            Direction.Down => '\u2193',
-            Direction.DownLeft => '\u2199',
-            Direction.Left => '\u2190',
-            Direction.UpLeft => '\u2196',
-            _ => throw new ArgumentOutOfRangeException(nameof(guardDirection), guardDirection, null)
-        };
+        var map = Grid<char>.CreateCharGrid(input);
+        var guardPosition = map.GetPosition('^');
+        ArgumentNullException.ThrowIfNull(guardPosition);
+        
+        return (map, guardPosition.Value);
     }
 }

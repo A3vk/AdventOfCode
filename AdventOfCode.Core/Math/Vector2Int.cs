@@ -51,7 +51,8 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
         X = newX;
         Y = newY;
     }
-
+    
+    // IEquatable
     public bool Equals(Vector2Int other)
     {
         return X == other.X && Y == other.Y;
@@ -67,6 +68,17 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
         return HashCode.Combine(X, Y);
     }
 
+    public static bool operator ==(Vector2Int left, Vector2Int right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(Vector2Int left, Vector2Int right)
+    {
+        return !left.Equals(right);
+    }
+    
+    // IFormattable
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
         FormattableString formattable = $"<{X},{Y}>";

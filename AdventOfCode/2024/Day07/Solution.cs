@@ -6,22 +6,17 @@ namespace AdventOfCode._2024.Day07;
 [ProblemName("Bridge Repair")]
 public class Solution : SolverBase<long, IEnumerable<Equation>>
 {
-    protected override long SolvePartOne(string input) => Solve(input, [Operator.Add, Operator.Multiply]);
+    protected override long SolvePartOne(IEnumerable<Equation> input) => Solve(input, [Operator.Add, Operator.Multiply]);
 
-    protected override  long SolvePartTwo(string input) => Solve(input, [Operator.Add, Operator.Multiply, Operator.Concatenation]);
+    protected override  long SolvePartTwo(IEnumerable<Equation> input) => Solve(input, [Operator.Add, Operator.Multiply, Operator.Concatenation]);
     
     protected override IEnumerable<Equation> Parse(string input)
     {
         return input.GetLines().Select(x => new Equation(x)).ToList();
     }
 
-    private long Solve(string input, List<Operator> operators) =>
-        Parse(input)
-            .Where(equation => IsValid(equation.Result,
-                equation.Values[0],
-                equation.Values[1..],
-                operators))
-            .Sum(equation => equation.Result);
+    private long Solve(IEnumerable<Equation> input, List<Operator> operators) => 
+        input.Where(equation => IsValid(equation.Result, equation.Values[0], equation.Values[1..], operators)).Sum(equation => equation.Result);
 
     private bool IsValid(long target, long accumulated, List<long> values, List<Operator> operators)
     {

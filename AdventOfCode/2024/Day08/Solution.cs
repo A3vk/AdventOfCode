@@ -7,15 +7,13 @@ namespace AdventOfCode._2024.Day08;
 [ProblemName("Resonant Collinearity")]
 public class Solution : SolverBase<int, Grid<char>>
 {
-    protected override int SolvePartOne(string input) => GetUniquePositions(input, GetAntinodesPart1).Count();
+    protected override int SolvePartOne(Grid<char> input) => GetUniquePositions(input, GetAntinodesPart1).Count();
 
-    protected override int SolvePartTwo(string input) => GetUniquePositions(input, GetAntinodesPart2).Count();
+    protected override int SolvePartTwo(Grid<char> input) => GetUniquePositions(input, GetAntinodesPart2).Count();
 
     private delegate IEnumerable<Vector2Int> GetAntinodes(Grid<char> map, Vector2Int firstAntennaPosition, Vector2Int secondAntennaPosition);
-    private IEnumerable<Vector2Int> GetUniquePositions(string input, GetAntinodes getAntinodesFunc)
+    private IEnumerable<Vector2Int> GetUniquePositions(Grid<char> map, GetAntinodes getAntinodesFunc)
     {
-        var map = Parse(input);
-
         var antennas = map.Where(x => char.IsAsciiLetterOrDigit(x.Value)).Select(x => x.Position).ToList();
         
         List<Vector2Int> antinodes = [];

@@ -79,6 +79,11 @@ public class Grid<T> : IEnumerable<Node<T>>
         return !IsOutOfBounds(position) ? _grid[position.X, position.Y].Value : default;
     }
     
+    public Node<T>? GetNodeOrDefault(Vector2Int position)
+    {
+        return !IsOutOfBounds(position) ? _grid[position.X, position.Y] : default;
+    }
+    
     public T? GetValueOrDefault(int x, int y)
     {
         var position = new Vector2Int(x, y);
@@ -90,6 +95,23 @@ public class Grid<T> : IEnumerable<Node<T>>
         if (IsOutOfBounds(position)) throw new IndexOutOfRangeException("Position is out of bounds");
         
         _grid[position.X, position.Y] = new Node<T>(value, position);
+    }
+
+    public List<Node<T>> GetNeighbors(Vector2Int position, bool includeDiagonals = false)
+    {
+        List<Node<T>> neighbors = [];
+        foreach (var direction in Vector2Int.AllDirections)
+        {
+            if (!includeDiagonals && !(direction.X == 0 || direction.Y == 0)) continue;
+
+            var neighborPosition = position + direction;
+            if (!IsOutOfBounds(neighborPosition))
+            {
+                neighbors.Add(_grid[neighborPosition.X, neighborPosition.Y]);
+            }
+        }
+        
+        return neighbors;
     }
 
     public bool IsOutOfBounds(Vector2Int position) =>  position.X < 0 || position.X >= Size.X || position.Y < 0 || position.Y >= Size.Y;

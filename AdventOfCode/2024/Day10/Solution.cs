@@ -8,28 +8,24 @@ namespace AdventOfCode._2024.Day10;
 [ProblemName("Hoof It")]
 public class Solution : SolverBase<int, Grid<TerrainTile>>
 {
-    protected override int SolvePartOne(Grid<TerrainTile> input) => input.Where(x => x.Value.Height == 0).Sum(x => NumberOfTrails(input, x.Position));
-
-    protected override int SolvePartTwo(Grid<TerrainTile> input)
-    {
-        throw new NotImplementedException();
-    }
+    protected override int SolvePartOne(Grid<TerrainTile> input) => input.Where(x => x.Value.Height == 0).Select(x => FindTrails(input, x.Position).Count).Sum();
+    protected override int SolvePartTwo(Grid<TerrainTile> input) => input.Where(x => x.Value.Height == 0).SelectMany(x => FindTrails(input, x.Position).Values).Sum();
 
     protected override Grid<TerrainTile> Parse(string input) => new(input.GetLines().Select(x => x.ToCharArray().Select(c => new TerrainTile(int.Parse(c.ToString())))));
 
-    private int NumberOfTrails(Grid<TerrainTile> map, Vector2Int trailHead)
+    private Dictionary<Vector2Int, int> FindTrails(Grid<TerrainTile> map, Vector2Int trailHead)
     {
-        List<Vector2Int> foundTrails = [];
+        Dictionary<Vector2Int, int> foundTrails = [];
         
         Queue<Vector2Int> positionsToCheck = new([trailHead]);
         while (positionsToCheck.Count != 0)
         {
-            var currentNode = map.GetNodeOrDefault(positionsToCheck.Dequeue());
-            if (currentNode == null) continue;
+            var currentNode = map.GetNode(positionsToCheck.Dequeue());
             
-            if (currentNode.Value.Height == 9 && !foundTrails.Contains(currentNode.Position))
+            if (currentNode.Value.Height == 9)
             {
-                foundTrails.Add(currentNode.Position);
+                foundTrails.TryAdd(currentNode.Position, 0);
+                foundTrails[currentNode.Position]++;
                 continue;
             }
 
@@ -39,7 +35,7 @@ public class Solution : SolverBase<int, Grid<TerrainTile>>
             }
         }
         
-        return foundTrails.Count;
+        return foundTrails;
     }
 }
 

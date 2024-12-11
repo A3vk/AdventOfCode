@@ -84,6 +84,11 @@ public class Grid<T> : IEnumerable<Node<T>>
         return !IsOutOfBounds(position) ? _grid[position.X, position.Y] : default;
     }
     
+    public Node<T> GetNode(Vector2Int position)
+    {
+        return !IsOutOfBounds(position) ? _grid[position.X, position.Y] : throw new ArgumentOutOfRangeException(nameof(position));
+    }
+    
     public T? GetValueOrDefault(int x, int y)
     {
         var position = new Vector2Int(x, y);

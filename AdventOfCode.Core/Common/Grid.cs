@@ -15,6 +15,11 @@ public class Grid<T> : IEnumerable<Node<T>>
         return new Grid<char>(input.GetLines().Select(x => x.ToCharArray().ToList()).ToList());
     }
     
+    public static Grid<T> CreateGridFromString(string input, Func<char, T> parseFunc)
+    {
+        return new Grid<T>(input.GetLines().Select(x => x.ToCharArray().Select(parseFunc).ToList()).ToList());
+    }
+    
     public Grid(IEnumerable<IEnumerable<T>> grid)
     {
         Size = new Vector2Int(grid.First().Count(), grid.Count());

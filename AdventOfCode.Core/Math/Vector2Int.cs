@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace AdventOfCode.Core.Math;
 
-public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
+public record struct Vector2Int : IFormattable
 {
     public static Vector2Int Zero = new(0, 0);
     public static Vector2Int One = new(1, 1);
@@ -45,6 +45,7 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     public static Vector2Int operator -(Vector2Int value) => new(-value.X, -value.Y);
     public static Vector2Int operator -(Vector2Int a, int b) => new(a.X - b, a.Y - b);
     public static Vector2Int operator -(Vector2Int a, Vector2Int b) => new(a.X - b.X, a.Y - b.Y);
+    public static Vector2Int operator +(Vector2Int a, int b) => new(a.X + b, a.Y + b);
     public static Vector2Int operator +(Vector2Int a, Vector2Int b) => new(a.X + b.X, a.Y + b.Y);
     public static Vector2Int operator *(Vector2Int value, int multiplier) => new(value.X * multiplier, value.Y * multiplier);
     public static Vector2Int operator * (Vector2Int a, Vector2Int b) => new(a.X * b.X, a.Y * b.Y);
@@ -66,32 +67,6 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
         var newY = Y * rotationVector.X + X * rotationVector.Y;
         X = newX;
         Y = newY;
-    }
-    
-    // IEquatable
-    public bool Equals(Vector2Int other)
-    {
-        return X == other.X && Y == other.Y;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return obj is Vector2Int other && Equals(other);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(X, Y);
-    }
-
-    public static bool operator ==(Vector2Int left, Vector2Int right)
-    {
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(Vector2Int left, Vector2Int right)
-    {
-        return !left.Equals(right);
     }
     
     // IFormattable
